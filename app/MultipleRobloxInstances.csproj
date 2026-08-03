@@ -8,11 +8,17 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>MultipleRobloxInstances</AssemblyName>
     <RootNamespace>MultipleRobloxInstances</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Embed all images in Resources/ as WPF pack URI resources -->
+  <ItemGroup>
+    <Resource Include="Resources\*.png" />
   </ItemGroup>
 
 </Project>
