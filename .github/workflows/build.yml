@@ -17,12 +17,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Publish
-        run: |
-          cd MultipleRobloxInstances/MultipleRobloxInstances
-          dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o out
+        run: dotnet publish app/MultipleRobloxInstances.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o out
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: MultipleRobloxInstances
-          path: MultipleRobloxInstances/MultipleRobloxInstances/out/*.exe
+          path: out/*.exe
