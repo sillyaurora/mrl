@@ -1,0 +1,181 @@
+<UserControl x:Name="Username" x:Class="MultipleRobloxInstances.Resources.RobloxInstance"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MultipleRobloxInstances.Resources"
+             mc:Ignorable="d" Width="522" Height="90">
+
+    <UserControl.Resources>
+        <ControlTemplate x:Key="NoHighlightBut" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Background="{TemplateBinding Background}"
+                    SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="contentPresenter"
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    Content="{TemplateBinding Content}"
+                    ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                    Focusable="False"
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    Margin="{TemplateBinding Padding}"
+                    RecognizesAccessKey="True"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border"
+                            Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter Property="Background"  TargetName="border" Value="#282828"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#282828"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background"  TargetName="border" Value="#FFF4F4F4"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
+                    <Setter Property="Foreground"              Value="#FF838383"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <Grid x:Name="UsernameGrid" Width="522" Height="90">
+
+        <!-- Subtle bottom separator line -->
+        <Rectangle VerticalAlignment="Bottom" Height="1" Fill="#08FFFFFF"/>
+
+        <!-- Avatar -->
+        <Image x:Name="PFP"
+               HorizontalAlignment="Left" VerticalAlignment="Top"
+               Width="50" Height="50" Margin="24,12,0,0"
+               Source="/Resources/noFilter.png"/>
+
+        <!-- Display name -->
+        <Label x:Name="DisplayName"
+               Content="Display name"
+               HorizontalAlignment="Left" VerticalAlignment="Top"
+               Margin="82,2,0,0" Width="330" Height="28"
+               FontFamily="Calibri" FontSize="20"
+               Foreground="#FFE8E8E8"/>
+
+        <!-- Roblox username -->
+        <Label x:Name="FullUsername"
+               Content="@username"
+               HorizontalAlignment="Left" VerticalAlignment="Top"
+               Margin="82,28,0,0" Width="330" Height="20"
+               FontFamily="Calibri Light" FontSize="14"
+               Foreground="#FF8F8F8F"/>
+
+        <!-- Nickname row (TextBox + placeholder overlay) -->
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top"
+              Margin="84,50,0,0" Width="310" Height="16">
+            <TextBox x:Name="NicknameBox"
+                     Background="Transparent" BorderThickness="0"
+                     FontFamily="Calibri Light" FontSize="10" FontStyle="Italic"
+                     Foreground="#FF9B62F9" CaretBrush="#FF9B62F9"
+                     VerticalAlignment="Center" Padding="0"
+                     MaxLength="32"/>
+            <TextBlock x:Name="NicknamePlaceholder"
+                       Text="Add nickname..."
+                       FontFamily="Calibri Light" FontSize="10" FontStyle="Italic"
+                       Foreground="#FF383838"
+                       VerticalAlignment="Center"
+                       IsHitTestVisible="False"/>
+        </Grid>
+
+        <!-- Game name -->
+        <Label x:Name="GameName"
+               Content="Game Name"
+               HorizontalAlignment="Left" VerticalAlignment="Top"
+               Margin="82,66,0,0" Width="310" Height="18"
+               FontFamily="Calibri Light" FontSize="10"
+               Foreground="#FF4D4D4D"/>
+
+        <!-- ── Right-side buttons ──────────────────────────────────────────── -->
+
+        <!-- Relaunch (hidden until crash) -->
+        <Button x:Name="RelaunchBtn"
+                Content="Relaunch"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Margin="0,10,10,0" Width="72" Height="20"
+                FontFamily="Calibri Light" FontSize="10"
+                Background="#1A2ECC71" BorderBrush="#332ECC71" BorderThickness="1"
+                Foreground="#CC2ECC71"
+                Template="{DynamicResource NoHighlightBut}"
+                Visibility="Collapsed" Opacity="0.85">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="UIElement.MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1" Duration="0:0:0.15"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="UIElement.MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="0.85" Duration="0:0:0.15"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <!-- Kill / Dismiss -->
+        <Button x:Name="KilInstance"
+                Content="Kill instance"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Margin="0,54,10,0" Width="72" Height="20"
+                FontFamily="Calibri Light" FontSize="10"
+                Background="#4C000000" BorderBrush="#19A5A5A5" BorderThickness="1"
+                Foreground="#FFFAFAFA"
+                Template="{DynamicResource NoHighlightBut}"
+                Opacity="0.75">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="UIElement.MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1" Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="UIElement.MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="0.75" Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <!-- Crash badge (hidden until SetCrashed is called) -->
+        <StackPanel x:Name="CrashBadge"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Margin="0,2,10,0"
+                    Visibility="Collapsed">
+            <Ellipse Width="6" Height="6" Fill="#FFFF4444"
+                     VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <TextBlock Text="Crashed"
+                       FontFamily="Calibri Light" FontSize="9"
+                       Foreground="#FFFF4444" VerticalAlignment="Center"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

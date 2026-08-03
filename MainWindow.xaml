@@ -1,0 +1,364 @@
+<Window x:Name="MW" x:Class="MultipleRobloxInstances.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultipleRobloxInstances"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="356" Width="524"
+        WindowStyle="None" Background="{x:Null}" ResizeMode="NoResize"
+        MouseDown="Window_MouseDown" Foreground="{x:Null}">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="GlyphBrush"                  Color="#444" />
+        <SolidColorBrush x:Key="NormalBrush"                  Color="#888" />
+        <SolidColorBrush x:Key="NormalBorderBrush"            Color="#888" />
+        <SolidColorBrush x:Key="HorizontalNormalBrush"        Color="#FF686868" />
+        <SolidColorBrush x:Key="HorizontalNormalBorderBrush"  Color="#888" />
+        <SolidColorBrush x:Key="DisabledForegroundBrush"      Color="#888" />
+
+        <ControlTemplate x:Key="NoHighlightBut" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Background="{TemplateBinding Background}"
+                    SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="contentPresenter"
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    Content="{TemplateBinding Content}"
+                    ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                    Focusable="False"
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    Margin="{TemplateBinding Padding}"
+                    RecognizesAccessKey="True"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border"
+                            Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter Property="Background"   TargetName="border" Value="#4C464646"/>
+                    <Setter Property="BorderBrush"  TargetName="border" Value="#4C464646"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background"   TargetName="border" Value="#4C464646"/>
+                    <Setter Property="BorderBrush"  TargetName="border" Value="#4C464646"/>
+                    <Setter Property="Foreground"               Value="#4C464646"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <LinearGradientBrush x:Key="PressedBrush" StartPoint="0,0" EndPoint="0,1">
+            <LinearGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="#BBB" Offset="0.0"/>
+                    <GradientStop Color="#EEE" Offset="0.1"/>
+                    <GradientStop Color="#EEE" Offset="0.9"/>
+                    <GradientStop Color="#FFF" Offset="1.0"/>
+                </GradientStopCollection>
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+
+        <!-- Scroll bar styles (unchanged from original) -->
+        <Style x:Key="ScrollBarLineButton" TargetType="{x:Type RepeatButton}">
+            <Setter Property="Visibility" Value="Hidden"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border x:Name="Border" Margin="0"
+                                Background="{StaticResource NormalBrush}"
+                                BorderBrush="{StaticResource NormalBorderBrush}"
+                                BorderThickness="0">
+                            <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Fill="{StaticResource GlyphBrush}"
+                                  Data="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+            <Setter Property="Visibility" Value="Hidden"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Background="Black"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border CornerRadius="3"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0" Width="8" Margin="8,0,-2,0"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="0"/>
+                    <RowDefinition Height="0.00001*"/>
+                    <RowDefinition MaxHeight="0"/>
+                </Grid.RowDefinitions>
+                <Border Grid.RowSpan="3" Background="Transparent"/>
+                <RepeatButton Grid.Row="0" Style="{StaticResource ScrollBarLineButton}" Height="18"
+                              Command="ScrollBar.LineUpCommand" Content="M 0 4 L 8 4 L 4 0 Z"
+                              Background="{x:Null}"/>
+                <Track x:Name="PART_Track" Grid.Row="1" IsDirectionReversed="true">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageUpCommand"/>
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource ScrollBarThumb}" Margin="0.5,0,0.5,0"
+                               Background="#33525252" BorderBrush="#7F7C7C7C"/>
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageDownCommand"/>
+                    </Track.IncreaseRepeatButton>
+                </Track>
+                <RepeatButton Grid.Row="3" Style="{StaticResource ScrollBarLineButton}" Height="18"
+                              Command="ScrollBar.LineDownCommand" Content="M 0 0 L 4 4 L 8 0 Z"/>
+            </Grid>
+        </ControlTemplate>
+        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width"    Value="18"/>
+                    <Setter Property="Height"   Value="Auto"/>
+                    <Setter Property="Template" Value="{StaticResource VerticalScrollBar}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="FavsScrollViewer" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter Grid.Column="1"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="Border" Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="446*"/>
+            <ColumnDefinition Width="79*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="MainWin" Margin="0.5,0.5,0.5,0.5"
+              Width="522" Height="355" Grid.ColumnSpan="2"
+              Background="#FF0C0C0C">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="177*"/>
+                <ColumnDefinition Width="23*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ── TOP BAR ─────────────────────────────────────────────────────── -->
+            <Grid x:Name="TopBar" Margin="0,0,-2,313" Grid.ColumnSpan="2">
+                <Label x:Name="WindowTitle"
+                       Content="Multiple Roblox Instances"
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       Height="40" Width="237"
+                       FontFamily="Calibri Light" FontSize="22" Foreground="White"
+                       Margin="4,0,0,0">
+                    <Label.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="1"/>
+                            <SkewTransform/><RotateTransform/><TranslateTransform/>
+                        </TransformGroup>
+                    </Label.RenderTransform>
+                </Label>
+
+                <!-- Version badge -->
+                <Border x:Name="VersionBorder"
+                        BorderThickness="1" HorizontalAlignment="Left"
+                        Height="16" CornerRadius="5" VerticalAlignment="Center"
+                        Width="28" BorderBrush="#FF9B62F9" Margin="244,0,0,0"/>
+                <TextBlock x:Name="VersionText"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           Width="28" Height="14"
+                           FontFamily="Calibri Light" FontSize="10" TextAlignment="Center"
+                           Foreground="#FF9A9898" Margin="244,0,0,-1.5">
+                    <Run Text="2."/><Run Text="3"/>
+                </TextBlock>
+                <TextBlock x:Name="UpdateAvailable"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           Width="149.7" Height="14"
+                           FontFamily="Calibri Light" FontSize="10" TextAlignment="Left"
+                           Foreground="#FF646464" Margin="280,0,0,-1.5"
+                           MouseDown="UpdateAvailable_MouseDown" Visibility="Hidden">
+                    <Run Text="Update available"/>
+                </TextBlock>
+
+                <!-- Window controls -->
+                <Button x:Name="Minimise"
+                        Content="—" HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Margin="454,0,0,0" Width="21" Height="30" FontSize="20"
+                        Template="{DynamicResource NoHighlightBut}"
+                        Background="{x:Null}" BorderBrush="{x:Null}"
+                        Foreground="White" FontFamily="Calibri Light"
+                        Click="Minimise_Click"/>
+                <Button x:Name="CloseWindow"
+                        Content="X" HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Margin="489,0,0,0" Width="21" Height="30" FontSize="20"
+                        Template="{DynamicResource NoHighlightBut}"
+                        Background="{x:Null}" BorderBrush="{x:Null}"
+                        Foreground="White" FontFamily="Calibri Light"
+                        Click="Close_Click"/>
+            </Grid>
+
+            <!-- ── ACTION BAR (new) ────────────────────────────────────────────── -->
+            <!-- Sits between TopBar and the instances scroll view.                 -->
+            <Grid x:Name="ActionBar" Grid.ColumnSpan="2" Margin="0,42,0,0" Height="26">
+                <!-- Subtle separator lines top+bottom -->
+                <Rectangle VerticalAlignment="Top"   Height="1" Fill="#0AFFFFFF"/>
+                <Rectangle VerticalAlignment="Bottom" Height="1" Fill="#08FFFFFF"/>
+
+                <!-- Launch button -->
+                <Button x:Name="LaunchBtn"
+                        Content="＋ Launch Instance"
+                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Margin="8,0,0,0" Width="112" Height="18"
+                        FontFamily="Calibri Light" FontSize="10"
+                        Foreground="#CC9B62F9"
+                        Background="#1A9B62F9" BorderBrush="#339B62F9" BorderThickness="1"
+                        Template="{DynamicResource NoHighlightBut}"
+                        Padding="0" Click="LaunchBtn_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Triggers>
+                                <EventTrigger RoutedEvent="UIElement.MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                             To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="UIElement.MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                             To="0.75" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <!-- Launcher badge (e.g. "via Bloxstrap") -->
+                <TextBlock x:Name="LauncherBadge"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           Margin="128,0,0,0"
+                           FontFamily="Calibri Light" FontSize="10"
+                           Foreground="#FF424242"
+                           Text="via Roblox"/>
+
+                <!-- Error strip — shown briefly when something goes wrong -->
+                <TextBlock x:Name="ErrorStrip"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           Margin="220,0,8,0" Width="294"
+                           FontFamily="Calibri Light" FontSize="10"
+                           Foreground="#FFFF6B6B"
+                           TextTrimming="CharacterEllipsis"
+                           Visibility="Collapsed"/>
+            </Grid>
+
+            <!-- ── INSTANCES SCROLL VIEW ───────────────────────────────────────── -->
+            <ScrollViewer x:Name="InstancesScrollView"
+                          HorizontalAlignment="Left"
+                          Height="261" VerticalAlignment="Top"
+                          Width="522" Grid.ColumnSpan="2"
+                          Margin="0,68,0,0">
+                <WrapPanel x:Name="WP1"
+                           HorizontalAlignment="Left" Height="Auto"
+                           VerticalAlignment="Top" Width="522"
+                           Grid.IsSharedSizeScope="True"/>
+            </ScrollViewer>
+
+            <!-- ── STATUS BAR ──────────────────────────────────────────────────── -->
+            <Grid x:Name="StatusBar" Grid.ColumnSpan="2" Margin="0,330,0,0">
+                <Label x:Name="StatusText"
+                       Content="Multiple Roblox Instances is currently running."
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       HorizontalContentAlignment="Left"
+                       Margin="3,-2,0,0" Height="25" Width="364"
+                       Foreground="#FF737373" FontFamily="Calibri"/>
+                <Image x:Name="WebsiteIcon"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="432,3,0,0" Width="15" Height="16"
+                       Source="/Resources/QuestionIcon.png" Opacity="0.5"
+                       MouseDown="WebsiteIcon_MouseDown"/>
+                <Image x:Name="TelegramIcon"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="454,4,0,0" Width="13" Height="14"
+                       Source="/Resources/TelegramIcon.png" Opacity="0.5"
+                       MouseDown="TelegramIcon_MouseDown"/>
+                <Image x:Name="DiscordIcon"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       Margin="476,0,0,3" Width="14" Height="18"
+                       Source="/Resources/DiscordIcon.png" Opacity="0.5"
+                       MouseDown="DiscordIcon_MouseDown"/>
+                <Image x:Name="GitHubIcon"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="499,4,0,0" Width="13" Height="14"
+                       Source="/Resources/GitHubIcon.png" Opacity="0.5"
+                       MouseDown="GitHubIcon_MouseDown"/>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</Window>
